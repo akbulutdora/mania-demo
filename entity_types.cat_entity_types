@@ -1,0 +1,573 @@
+[
+    {
+        id = "0x84b392978a4286fdf2a9d3d0460973e3"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 16
+                width = 22
+                x = -10
+                y = -8
+            }
+            texture = 1652469505785320728
+        }
+    }
+    {
+        id = "0x732077bdd3da44eea63b2277b49bfc39"
+        variant = {
+            __tag = 1
+            texture = 3850223992905181779
+        }
+    }
+    {
+        id = "0x91e1b0a7ebdf3784f8d42c1e943ae4fb"
+        variant = {
+            __tag = 1
+            texture = -4279236311197637261
+        }
+    }
+    {
+        id = "0x6397e87754b2cc15860cf1d354387490"
+        variant = {
+            __tag = 1
+            texture = 8319676696137004608
+        }
+    }
+    {
+        id = "0xad02bdd06d3061dc687fca7548082ee8"
+        variant = {
+            __tag = 2
+            frame_time = 0.100100003182888
+            num_frames = 4
+            texture = -5561419437735873087
+        }
+    }
+    {
+        id = "0xf9d54a0343e9c6dbe5bfd065c7452c0e"
+        variant = {
+            __tag = 1
+            collider = {
+                x = -94
+                y = -59
+            }
+            texture = 4041148807042368128
+        }
+    }
+    {
+        id = "0x3ddf84293a0a2a809016714f26c2a1a8"
+        variant = {
+            __tag = 1
+            texture = 22813573867336186
+        }
+    }
+    {
+        id = "0x5feebcda20d66269f9d977836ae3f11c"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 4
+                width = 72
+                x = -36
+                y = -12
+            }
+            texture = -466693346030085748
+        }
+    }
+    {
+        id = "0x19cc786fdae00d2d4cbab88247c634e0"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 93
+                width = 76
+                x = -47
+                y = -46
+            }
+            texture = -8675323677338896967
+        }
+    }
+    {
+        id = "0x26d9b9e8b2aab53b88e373d2a05311fc"
+        variant = {
+            __tag = 2
+            collider = {
+                height = 11
+                width = 95
+                x = -48
+                y = -4
+            }
+            frame_time = 0.5
+            num_frames = 4
+            texture = -1408705382376419611
+        }
+    }
+    {
+        id = "0xf8897f830bb46f143a59c71baf8eefe0"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 13
+                width = 13
+                x = -6
+                y = -6
+            }
+            texture = 3744153110131723424
+        }
+    }
+    {
+        id = "0x9a3dd7eaf4590a2519efa1d1ce8eff10"
+        variant = {
+            __tag = 1
+            texture = 357532026828942519
+        }
+    }
+    {
+        id = "0xd560999eaa187207f768c3784de95d7"
+        variant = {
+            __tag = 1
+            texture = -7848352692036214670
+        }
+    }
+    {
+        id = "0xf7f5731e880371689c53f9bb73e3583"
+        variant = {
+            __tag = 1
+            texture = -7090292496717114927
+        }
+    }
+    {
+        id = "0x5dbad70416d6e9ff7d4f7805b878c45c"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 32
+                width = 11
+                x = -3
+                y = -16
+            }
+            texture = 4234891328255101667
+        }
+    }
+    {
+        id = "0x64b909e8ac33e07d7fda047f9dea4fbb"
+        variant = {
+            __tag = 1
+            texture = -5060759029450229194
+        }
+    }
+    {
+        id = "0xae6af3631cd332dfcaaedebd918a843b"
+        variant = {
+            __tag = 1
+            texture = 7602701869648140023
+        }
+    }
+    {
+        id = "0xaa942caf0766416690026a4114fd59d"
+        variant = {
+            __tag = 1
+            texture = 4102094792262165249
+        }
+    }
+    {
+        id = "0x4e33af1f846ba3c2003af36bf444cd10"
+        variant = {
+            __tag = 1
+            texture = 5145749093839646108
+        }
+    }
+    {
+        id = "0xc77a46ff101372fc60e41812abd64602"
+        variant = {
+            __tag = 1
+            collider = {
+                x = -110
+                y = -60
+            }
+            texture = -691683325764186102
+        }
+    }
+    {
+        id = "0x9f4bdd51b2a4e54b86a6909dc7ae5328"
+        variant = {
+            __tag = 1
+            texture = -3983055812053592155
+        }
+    }
+    {
+        id = "0x79c1a2b9552b4040d0d9703c0269f353"
+        variant = {
+            __tag = 1
+            texture = 769785316350737955
+        }
+    }
+    {
+        id = "0xb0d7ba9f6539dfe85a4ffca55afaab8d"
+        variant = {
+            __tag = 1
+            texture = 5081804279281223301
+        }
+    }
+    {
+        id = "0x2fcd5fe0593a460d007a7007150b07c7"
+        variant = {
+            __tag = 1
+            texture = -3442319438245282519
+        }
+    }
+    {
+        id = "0x28058183742ddbc13f66c05a922fe494"
+        variant = {
+            __tag = 1
+            texture = -1553077712855555561
+        }
+    }
+    {
+        id = "0x9e55b3503786afb294f3bd13223ee44b"
+        variant = {
+            __tag = 2
+            collider = {
+                height = 80
+                width = 3
+                x = -18
+                y = -40
+            }
+            frame_time = 0.25
+            num_frames = 4
+            start_paused = true
+            texture = -4322961314428855751
+        }
+    }
+    {
+        id = "0xa65d00eaadc8f1b4d5d98635546ee831"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 6
+                width = 42
+                x = -21
+                y = 2
+            }
+            texture = -7999346238528869981
+        }
+    }
+    {
+        id = "0x3f9e0aec764e5a0b34c79cd8735293fe"
+        variant = {
+            __tag = 1
+            texture = -2320040234193444154
+        }
+    }
+    {
+        id = "0x76cf06b0d9f652c03edeed2a9683d781"
+        variant = {
+            __tag = 1
+            texture = 5872958661479983826
+        }
+    }
+    {
+        id = "0x255d1795cc3a94f05468e41a5e126251"
+        variant = {
+            __tag = 1
+            texture = 5353175249782136491
+        }
+    }
+    {
+        id = "0xb05bcd8d47674327cb3334fe10ea5a0b"
+        variant = {
+            __tag = 1
+            texture = 1487881532336885505
+        }
+    }
+    {
+        id = "0x7d4bb9f5d55b488e71ae58e951b2f1d1"
+        variant = {
+            __tag = 1
+            texture = 8373332943442992628
+        }
+    }
+    {
+        id = "0x25dbe58d30acfebcf8c574ae29ce8d0a"
+        variant = {
+            __tag = 1
+            texture = -4315028066394663724
+        }
+    }
+    {
+        id = "0x3e9ac6aabbcf143b28fbc5bd346fe6cc"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 14
+                width = 48
+                x = -24
+                y = -64
+            }
+            texture = -8021311524623610458
+        }
+    }
+    {
+        id = "0xdc19271ec1871bb58b77deab796c28da"
+        variant = {
+            __tag = 1
+        }
+    }
+    {
+        id = "0xb02ea856c9c74df9a7b00134480d8586"
+        variant = {
+            __tag = 1
+            texture = -1229012949418573286
+        }
+    }
+    {
+        id = "0xeea54beb60fdca2bfa15a01321317ee5"
+        variant = {
+            __tag = 1
+            texture = 9055587285816828891
+        }
+    }
+    {
+        id = "0x38eea56558325644273157ce3f6459bd"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 9
+                width = 166
+                x = -74
+                y = 26
+            }
+            texture = 2159496868456202720
+        }
+    }
+    {
+        id = "0xc7515e182cb98996644eacdc47ef9d9c"
+        variant = {
+            __tag = 1
+            collider = {
+                x = 21
+                y = -6
+            }
+            texture = -3304875893327063843
+        }
+    }
+    {
+        id = "0xcfc955ae1e37d01c908a753912a1f265"
+        variant = {
+            __tag = 1
+            texture = -6151738775011558937
+        }
+    }
+    {
+        id = "0x365f93a1323cba3870e34562e74a111b"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 3
+                width = 42
+                x = -21
+                y = -21
+            }
+            texture = -5199421444238083486
+        }
+    }
+    {
+        id = "0x23585089b5ff8955de58c0b6e2bff774"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 24
+                width = 24
+                x = -12
+                y = -12
+            }
+            texture = -4559236739694807990
+        }
+    }
+    {
+        id = "0x4620e5375f0350943cdbe077f17cb36a"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 3
+                width = 46
+                x = -23
+                y = -10
+            }
+            texture = 6893058129877166796
+        }
+    }
+    {
+        id = "0x5def2ce8733d1f24b7615b4f8b5d2cea"
+        variant = {
+            __tag = 1
+            collider = {
+                height = 80
+                width = 4
+                x = -2
+                y = -40
+            }
+            texture = -266566704231610472
+        }
+    }
+    {
+        id = "0x2abe3eb76ed096cd8e900b5a7a6605ba"
+        variant = {
+            __tag = 1
+            texture = 516460645331873449
+        }
+    }
+    {
+        id = "0x1096f30856cb81a548d1caff02f047ee"
+        variant = {
+            __tag = 1
+            texture = 5871033098624978149
+        }
+    }
+    {
+        id = "0x709ebf81c72f833902872167308f2d94"
+        variant = {
+            __tag = 1
+            texture = 3698798919652384134
+        }
+    }
+    {
+        id = "0xcfc0dc58be3afd793acf380574ae9d6d"
+        variant = {
+            __tag = 1
+            texture = -791028572075179326
+        }
+    }
+    {
+        id = "0x8a4ac1c634f5ca4465e61a24f2ed9a3f"
+        variant = {
+            __tag = 1
+            texture = -7204201518058902158
+        }
+    }
+    {
+        id = "0x91e9f86053d1825fed3d97b5e34ed09a"
+        variant = {
+            __tag = 1
+            texture = 509408012384674941
+        }
+    }
+    {
+        id = "0xd5cfea9d3a7e06955d8ebb63238bc073"
+        variant = {
+            __tag = 1
+            texture = -9085790653241549886
+        }
+    }
+    {
+        id = "0xcf545fcfee10d471c7cfc537c50c6d1e"
+        variant = {
+            __tag = 1
+            texture = 861324622073415169
+        }
+    }
+    {
+        id = "0x93a11bd492a5d4e5c163322c6995ca42"
+        variant = {
+            __tag = 1
+            texture = 3849861723521100161
+        }
+    }
+    {
+        id = "0x5839ad0fa54585af590622c6ebc36263"
+        variant = {
+            __tag = 1
+            texture = 7941576558233061724
+        }
+    }
+    {
+        id = "0xacc65942831449a621c6f1736a4b3235"
+        variant = {
+            __tag = 1
+            texture = 8023370459704636285
+        }
+    }
+    {
+        id = "0xab6c59e7c154082ea39cf3547a6689d"
+        variant = {
+            __tag = 1
+            texture = 1631451439021806144
+        }
+    }
+    {
+        id = "0x5501bbae0ee6a7b67860c28ace3d8f68"
+        variant = {
+            __tag = 1
+            texture = -7138288272257913461
+        }
+    }
+    {
+        id = "0xb3a130dd5e42a98f146f527bac146400"
+        variant = {
+            __tag = 1
+            texture = 242635393871146491
+        }
+    }
+    {
+        id = "0x1bcc3b5a9cccaff92e74599a9564b236"
+        variant = {
+            __tag = 1
+            texture = -5085005693196576741
+        }
+    }
+    {
+        id = "0x1dc9122c736f3b9dbbf5450bb0648072"
+        variant = {
+            __tag = 1
+            texture = 4492429244097218728
+        }
+    }
+    {
+        id = "0xf0dea5c1c7e28430df9c1b61f2030289"
+        variant = {
+            __tag = 1
+            texture = 8070844082616282688
+        }
+    }
+    {
+        id = "0x30ccea011aed3df4a80fdfe4de4f6dbd"
+        variant = {
+            __tag = 1
+            texture = 6399911864086388467
+        }
+    }
+    {
+        id = "0xaef5e9232c73827cd9f4bb0753d02b4a"
+        variant = {
+            __tag = 1
+            texture = -6500976179154915239
+        }
+    }
+    {
+        id = "0xafd57fda4df37e5bc019fb6e6f0708c8"
+        variant = {
+            __tag = 1
+            texture = 8571517972667214156
+        }
+    }
+    {
+        id = "0x43cbbf85d4459caa11252fbc5216b504"
+        variant = {
+            __tag = 1
+            texture = -4234033274591599866
+        }
+    }
+    {
+        id = "0xe59f3690627c2977fcb1b4eb5f83860a"
+        variant = {
+            __tag = 1
+            texture = 2065974804511058849
+        }
+    }
+    {
+        id = "0x1101777bc3374f8ddc6e50fd0355b738"
+        variant = {
+            __tag = 1
+            texture = -8216029314660168429
+        }
+    }
+]
