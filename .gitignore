@@ -1,0 +1,4 @@
+
+*.bin
+/game.bin.dSYM
+*.dylib
