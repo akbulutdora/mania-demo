@@ -1,3 +1,5 @@
 *.bin
 /game.bin.dSYM
 *.dylib
+game.bin
+game.dylib
