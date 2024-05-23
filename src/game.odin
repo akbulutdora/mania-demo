@@ -14,7 +14,9 @@ package game
 import "core:encoding/json"
 import "core:fmt"
 import "core:os"
+import "core:slice"
 import "core:time"
+
 import rl "vendor:raylib"
 
 PixelWindowHeight :: 180
@@ -36,81 +38,26 @@ GameMemory :: struct {
 	level_name:                         LevelName,
 	next_level_name:                    LevelName,
 	load_next_level:                    bool,
-	// cat:                                EntityHandle,
-	// rocket:                             EntityHandle,
-	// next_controlled_entity:             EntityHandle,
-	// controlled_entity:                  EntityHandle,
-
-	// world: World,
-	// serialized_state: SerializedState,
-
-	// asset_storage: AssetStorage,
 	editing:                            bool,
-	// editor_memory: EditorMemory,
-
-	// camera_state: CameraState,
 	debug_draw:                         bool,
 	clear_color:                        rl.Color,
 	font:                               rl.Font,
 	font_bold:                          rl.Font,
 	dialogue_font:                      rl.Font,
-
-	// tileset: TextureHandle,
-
-	// to_render: [dynamic]Renderable,
-	// text_to_render: [dynamic]RenderText,
-
-	// tileset_padded: rl.Texture,
-
-	// talk_icon: TextureHandle,
-	// talk_bg_arrow: TextureHandle,
-
-	// interactable_in_range: EntityHandle,
-	// active_interactions: [dynamic]Interaction,
 	had_active_interactions_this_frame: bool,
-
-	// progress: bit_set[ProgressFlag],
-
-	// delayed_events: [dynamic]DelayedEvent,
-	// next_events: [dynamic]Event,
-	// events: []Event,
 	pixel_filter_shader:                rl.Shader,
 	run:                                bool,
-
-	// inventory: Inventory,
 	selected_action:                    int,
-
-	// game_state: GameState,
-	// root_state: RootState,
-
-	// settings: Settings,
-
-	// music: MusicState,
 	disable_interaction_until:          f64,
 	disable_input_until:                f64,
-
-	// show_portrait: Maybe(Portrait),
-
-	// save: SavedGame,
 	last_saved_at:                      time.Time,
 	hide_hud:                           bool,
-
-	// We render into this tex to keep AR at 16:9
-	// main_drawing_tex: rl.RenderTexture2D,
-
-	// This time only counts up when update_default() is run... so it doesnt increase while paused etc
 	time:                               f64,
-
-	// sound_state: SoundState,
-
-	// spall_ctx: spall.Context,
-	// spall_buffer: spall.Buffer,
 	show_fps:                           bool,
 	camera_rect:                        Rect,
 	profiling:                          bool,
+	drawables:                          DrawableArray,
 }
-
-// EntityHandle :: distinct Handle
 
 animation_draw :: proc(a: Animation, pos: rl.Vector2, flip: bool) {
 	width := f32(a.texture.width)
@@ -134,7 +81,7 @@ animation_draw :: proc(a: Animation, pos: rl.Vector2, flip: bool) {
 		height = height,
 	}
 
-	rl.DrawTexturePro(a.texture, source, dest, {dest.width / 2, dest.height}, 0, rl.WHITE)
+	draw_texture(a.texture, source, dest, pos)
 }
 
 platform_collider :: proc(pos: rl.Vector2) -> rl.Rectangle {
@@ -162,22 +109,14 @@ LevelName :: enum {
 	MainMenu,
 }
 
+@(private = "file")
 g_mem: ^GameMemory
 
 game_camera :: proc() -> rl.Camera2D {
-	screen_height := f32(rl.GetScreenHeight())
+	w := f32(rl.GetScreenWidth())
+	h := f32(rl.GetScreenHeight())
 
-	return(
-		rl.Camera2D {
-			zoom = screen_height / PixelWindowHeight,
-			offset = {f32(rl.GetScreenWidth() / 2), screen_height / 2},
-			target = g_mem.player_pos,
-		} \
-	)
-	// w := f32(rl.GetScreenWidth())
-	// h := f32(rl.GetScreenHeight())
-
-	// return {zoom = h / PixelWindowHeight, target = g_mem.player_pos, offset = {w / 2, h / 2}}
+	return {zoom = h / PixelWindowHeight, target = g_mem.player_pos, offset = {w / 2, h / 2}}
 }
 
 ui_camera :: proc() -> rl.Camera2D {
@@ -186,6 +125,8 @@ ui_camera :: proc() -> rl.Camera2D {
 
 update :: proc() {
 	using g_mem
+	drawables_reset()
+
 	if rl.IsKeyDown(.A) {
 		player_vel.x = -100
 		player_flip = true
@@ -235,38 +176,54 @@ update :: proc() {
 draw :: proc() {
 	using g_mem
 
-	rl.BeginDrawing()
 	rl.ClearBackground({110, 184, 168, 255})
 
-	camera := game_camera()
-
 	rl.BeginMode2D(game_camera())
-
 	animation_draw(current_anim, player_pos, player_flip)
+
 	for platform in level.platforms {
-		rl.DrawTextureV(platform_texture, platform, rl.WHITE)
+		draw_texture(platform_texture, platform)
 	}
 
-	if rl.IsKeyPressed(.F2) {
-		editing = !editing
-	}
+	all_drawables := drawables_slice()
 
-	if editing {
-		mp := rl.GetScreenToWorld2D(rl.GetMousePosition(), camera)
+	slice.sort_by(all_drawables, proc(i, j: Drawable) -> bool {
+		iy, jy: f32
 
-		rl.DrawTextureV(platform_texture, mp, rl.WHITE)
+		switch d in i {
+		case DrawableTexture:
+			iy = d.pos.y
+		case DrawableRect:
 
-		if rl.IsMouseButtonPressed(.LEFT) {
-			append(&level.platforms, mp)
 		}
+		switch d in y {
+		case DrawableTexture:
+			j = d.pos.y
+		case DrawableRect:
 
-		if rl.IsMouseButtonPressed(.RIGHT) {
-			for p, idx in level.platforms {
-				if (rl.CheckCollisionPointRec(mp, platform_collider(p))) {
-					unordered_remove(&level.platforms, idx)
-					break
-				}
+		}
+		return iy < jy
+	})
+
+	for drawable in all_drawables {
+		switch d in drawable {
+		case DrawableTexture:
+			if d.source.width == 0 || d.source.height == 0 {
+				rl.DrawTextureV(d.tex, d.pos, rl.WHITE)
+			} else if d.dest.width == 0 || d.dest.height == 0 {
+				rl.DrawTextureRec(d.tex, d.source, d.pos, rl.WHITE)
+			} else {
+				rl.DrawTexturePro(
+					d.tex,
+					d.source,
+					d.dest,
+					{d.dest.width / 2, d.dest.height},
+					0,
+					rl.WHITE,
+				)
 			}
+		case DrawableRect:
+		// rl.DrawTextureRec(d.tex, d.source, d.pos, rl.WHITE)
 		}
 	}
 
@@ -275,14 +232,34 @@ draw :: proc() {
 	rl.BeginMode2D(ui_camera())
 	rl.DrawText(fmt.ctprintf("player_pos: %v", g_mem.player_pos), 5, 5, 8, rl.WHITE)
 	rl.EndMode2D()
-
-	rl.EndDrawing()
 }
 
 @(export)
 game_update :: proc() -> bool {
-	update()
-	draw()
+	if rl.IsKeyPressed(.F2) {
+		g_mem.editing = !g_mem.editing
+	}
+
+	rl.BeginDrawing()
+	// rl.BeginShaderMode(g_mem.pixel_filter_shader)
+	// rl.BeginBlendMode(.ALPHA_PREMULTIPLY)
+
+	if g_mem.editing {
+		editor_update()
+	} else {
+		update()
+	}
+
+	if g_mem.editing {
+		editor_draw()
+	} else {
+		draw()
+	}
+
+	// rl.EndBlendMode()
+	// rl.EndShaderMode()
+	rl.EndDrawing()
+
 	return !rl.WindowShouldClose()
 }
 
@@ -290,7 +267,7 @@ game_update :: proc() -> bool {
 game_init_window :: proc() {
 	rl.SetConfigFlags({.WINDOW_RESIZABLE})
 	rl.InitWindow(1280, 720, "Odin + Raylib + Hot Reload template!")
-	rl.SetWindowPosition(200, 200)
+	// rl.SetWindowPosition(200, 200)
 	rl.SetTargetFPS(500)
 }
 
@@ -303,15 +280,15 @@ game_init :: proc() {
 	{
 		using g_mem
 		player_run = Animation {
-			texture      = rl.LoadTexture(ASSET_PATH + "cat_run.png"),
-			num_frames   = 4,
+			texture      = rl.LoadTexture(ASSET_PATH + "player_run.png"),
+			num_frames   = 6,
 			frame_length = 0.1,
 			name         = .Run,
 		}
 
 		player_idle = Animation {
-			texture      = rl.LoadTexture(ASSET_PATH + "cat_idle.png"),
-			num_frames   = 2,
+			texture      = rl.LoadTexture(ASSET_PATH + "player_idle.png"),
+			num_frames   = 1,
 			frame_length = 0.5,
 			name         = .Idle,
 		}
@@ -338,12 +315,15 @@ game_init :: proc() {
 
 @(export)
 game_shutdown :: proc() {
-	using g_mem
+	rl.UnloadTexture(g_mem.player_run.texture)
+	rl.UnloadTexture(g_mem.player_idle.texture)
+	rl.UnloadTexture(g_mem.platform_texture)
 
-	if level_data, err := json.marshal(level, allocator = context.temp_allocator); err == nil {
+	if level_data, err := json.marshal(g_mem.level, allocator = context.temp_allocator);
+	   err == nil {
 		os.write_entire_file(LEVELS_PATH + "level.json", level_data)
 	}
-	delete(level.platforms)
+	delete(g_mem.level.platforms)
 
 	free(g_mem)
 	g_mem = nil
@@ -367,6 +347,7 @@ game_memory_size :: proc() -> int {
 @(export)
 game_hot_reloaded :: proc(mem: rawptr) {
 	g_mem = (^GameMemory)(mem)
+	drawables_init(&g_mem.drawables)
 }
 
 @(export)

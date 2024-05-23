@@ -7,9 +7,18 @@ tasks:
 
   run:
     cmds:
-      - odin run src
+      - ./game.bin
     aliases:
       - r
+    method: none
+    silent: false
+    deps: [compile]
+
+  compile:
+    cmds:
+      - ./scripts/build_hot_reload.sh
+    aliases:
+      - c
     method: none
     silent: false
     sources:
@@ -22,15 +31,5 @@ tasks:
       - t
     method: none
     silent: true
-    sources:
-      - ./mania_demo/*.odin
-
-  debug:
-    cmds:
-      - odin build mania_demo --debug --out="./mania"
-    aliases:
-      - d
-    method: none
-    silent: false
     sources:
       - ./mania_demo/*.odin
