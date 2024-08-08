@@ -43,12 +43,9 @@ readable JSON. Good for storing data saved by an editor.
 
 package game
 
-import "core:fmt"
 import "base:intrinsics"
 import "core:strings"
 import "core:encoding/json"
-
-_ :: fmt
 
 Serializer :: struct {
 	is_writing: bool,
