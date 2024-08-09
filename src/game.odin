@@ -19,6 +19,7 @@ import "core:prof/spall"
 import "core:slice"
 import "core:strings"
 import "core:time"
+import "core:fmt"
 
 import rl "vendor:raylib"
 
@@ -322,11 +323,6 @@ game_update :: proc() -> bool {
 	if rl.IsKeyPressed(.F2) {
 		if (!g_mem.editing) {
 			g_mem.editor_memory.clear_color = g_mem.clear_color
-			// fmt.printfln(
-			// 	"Entering editor mode. Setting editor clear color (%v) to game_mem color: %v",
-			// 	g_mem.clear_color,
-			// 	g_mem.editor_memory.clear_color,
-			// )
 		}
 
 		g_mem.editing = !g_mem.editing
@@ -396,6 +392,18 @@ game_init :: proc() {
 		g_mem.editing = false
 
 		g_mem.clear_color = rl.SKYBLUE
+
+		w: World
+		if data, ok := os.read_entire_file("my_data.json"); ok {
+			if j, err := json.parse(data, parse_integers = true); err == nil {
+				s: Serializer
+				serialize_init_reader(&s, j)
+				assert(serialize_world(&s, &w))
+			}
+		}
+
+		g_mem.world = w
+		g_mem.editor_memory.world = w
 
 		editor_refresh_globals(&g_mem.editor_memory)
 	}

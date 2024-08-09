@@ -1,7 +1,11 @@
 package game
 
+import "core:encoding/json"
 import "core:fmt"
+import "core:log"
+import "core:math"
 import "core:math/linalg"
+import "core:os"
 import rl "vendor:raylib"
 
 EditorMemory :: struct {
@@ -9,12 +13,12 @@ EditorMemory :: struct {
 	edit_mode_place_tiles: EditModePlaceTiles,
 	selection:             [dynamic]int,
 	level_name:            LevelName,
-	zoom:                  f32,
 	layer:                 int,
 	layer_view_mode:       LayerViewMode,
 	tileset_padded:        rl.Texture,
 	font:                  rl.Font,
 	world:                 World,
+	zoom:                  f32,
 	camera_pos:            Vec2,
 	clear_color:           rl.Color,
 }
@@ -39,17 +43,30 @@ em: ^EditorMemory
 
 editor_refresh_globals :: proc(editor_memory: ^EditorMemory) {
 	em = editor_memory
+
+	log.info(fmt.tprintf("successfully read tiles.\n%v", em.world))
 }
 
 edit_mode_update :: proc() {
-	if rl.IsKeyPressed(.P) {
-		fmt.println(mouse_world_position(get_camera(em.camera_pos, em.zoom)))
-	}
+	// if rl.IsKeyPressed(.P) {
+	// 	fmt.println(mouse_world_position(get_camera(em.camera_pos, em.zoom)))
+	// }
 
 	// rl.BeginShaderMode(em.pixel_filter_shader)
 	// defer rl.EndShaderMode()
 	// rl.BeginBlendMode(.ALPHA_PREMULTIPLY)
 	// defer rl.EndBlendMode()
+
+	if rl.IsKeyPressed(.S ) {
+		s: Serializer
+		serialize_init_writer(&s)
+		assert(serialize(&s, &em.world))
+
+		if data, err := json.marshal(s.root); err == nil {
+			os.write_entire_file("my_data.json", data)
+		}
+	}
+	mouse_clicked := rl.IsMouseButtonDown(.LEFT)
 
 	rl.ClearBackground(em.clear_color)
 
@@ -59,10 +76,11 @@ edit_mode_update :: proc() {
 		rl.BeginMode2D(ui_camera)
 		defer rl.EndMode2D()
 
-		mouse_pos := rl.GetMousePosition()
-		text := fmt.ctprintf("Mouse: %v", mouse_pos)
+		mouse_pos := mouse_pos()
+		text := fmt.ctprintf("Mouse: %v, %v", mouse_pos.x, mouse_pos.y)
 		rl.DrawText(text, 10, PixelWindowHeight - 20, 8, rl.RED)
 	}
+
 
 	for x in 0 ..= screen_width() / MetricEditorTileSize {
 		for y in 1 ..= screen_height() / MetricEditorTileSize + 1 {
@@ -73,7 +91,36 @@ edit_mode_update :: proc() {
 				MetricEditorTileSize,
 			}
 			rl.DrawRectangleLinesEx(rect, 0.5, rl.GRAY)
+
+			// if mouse pos is inside the rect, draw it colorful
+			if rl.CheckCollisionPointRec(mouse_pos(), rect) {
+				if mouse_clicked {
+					rl.DrawRectangleRec(rect, rl.BLACK)
+					append(
+						&em.world.tiles,
+						Tile {
+							tile_idx = len(em.world.tiles),
+							x = int(math.floor(x)),
+							y = int(math.floor(y)),
+						},
+					)
+				} else {
+					rl.DrawRectangleRec(rect, rl.RED)
+				}
+			}
+
 		}
+	}
+
+	for tile in em.world.tiles {
+		rl.DrawRectangleV(
+			{
+				f32(tile.x) * MetricEditorTileSize,
+				screen_height() - f32(MetricEditorTileSize * tile.y),
+			},
+			{MetricEditorTileSize, MetricEditorTileSize},
+			rl.BLACK,
+		)
 	}
 
 	window := rect_from_pos_size({0, 0}, screen_size())

@@ -7,11 +7,11 @@ Usage (writing):
 s: Serializer
 serialize_init_writer(&s)
 
-SomeStruct :: struct {
+Some_Struct :: struct {
 	field: int,
 }
 
-some_struct := SomeStruct {
+some_struct := Some_Struct {
 	field = 7,
 }
 
@@ -25,7 +25,7 @@ if data, err := json.marshal(&some_struct); err == nil {
 
 Usage (reading):
 
-some_struct: SomeStruct
+some_struct: Some_Struct
 
 if data, ok := os.read_entire_file("my_data.json"); ok {
 	if j, err := json.parse(data, parse_integers = true); err == nil {
@@ -44,18 +44,21 @@ readable JSON. Good for storing data saved by an editor.
 package game
 
 import "base:intrinsics"
-import "core:strings"
 import "core:encoding/json"
+import "core:fmt"
+import "core:strings"
+
+_ :: fmt
 
 Serializer :: struct {
 	is_writing: bool,
-	cur: ^json.Value,
-	root: json.Value,
+	cur:        ^json.Value,
+	root:       json.Value,
 }
 
 serialize_init_writer :: proc(s: ^Serializer) {
 	s.is_writing = true
-	s.root = json.Object {}
+	s.root = json.Object{}
 	s.cur = &s.root
 }
 
@@ -66,7 +69,11 @@ serialize_init_reader :: proc(s: ^Serializer, root: json.Value) {
 }
 
 @(require_results)
-serialize_int :: proc(s: ^Serializer, val: ^$T) -> bool where intrinsics.type_is_integer(T) && size_of(T) <= size_of(i64) {
+serialize_int :: proc(
+	s: ^Serializer,
+	val: ^$T,
+) -> bool where intrinsics.type_is_integer(T) &&
+	size_of(T) <= size_of(i64) {
 	if s.is_writing {
 		s.cur^ = json.Integer(val^)
 	} else {
@@ -132,8 +139,11 @@ serialize_enum :: proc(s: ^Serializer, val: ^$T) -> bool where intrinsics.type_i
 }
 
 @(require_results)
-serialize_union_tag_field :: proc(s: ^Serializer, key: string, value: ^$T) -> bool
-where intrinsics.type_is_union(T) {
+serialize_union_tag_field :: proc(
+	s: ^Serializer,
+	key: string,
+	value: ^$T,
+) -> bool where intrinsics.type_is_union(T) {
 	tag: i64
 	if s.is_writing {
 		tag = reflect.get_union_variant_raw_tag(value^)
@@ -172,11 +182,11 @@ serialize_fixed_array :: proc(s: ^Serializer, data: ^$T/[$N]$E) -> bool {
 	}
 
 	when intrinsics.type_is_enumerated_array(T) {
-		for idx in 0..<len(N) {
+		for idx in 0 ..< len(N) {
 			serialize_array_element(s, idx, &data[N(idx)]) or_return
 		}
 	} else {
-		for idx in 0..<N {
+		for idx in 0 ..< N {
 			serialize_array_element(s, idx, &data[idx]) or_return
 		}
 	}
@@ -184,7 +194,11 @@ serialize_fixed_array :: proc(s: ^Serializer, data: ^$T/[$N]$E) -> bool {
 }
 
 @(require_results)
-serialize_dynamic_array :: proc(s: ^Serializer, data: ^$T/[dynamic]$E, loc := #caller_location) -> bool {
+serialize_dynamic_array :: proc(
+	s: ^Serializer,
+	data: ^$T/[dynamic]$E,
+	loc := #caller_location,
+) -> bool {
 	if s.is_writing {
 		s.cur^ = make(json.Array, len(data))
 	} else {
@@ -209,7 +223,7 @@ serialize_array_element :: proc(s: ^Serializer, idx: int, v: ^$T) -> bool {
 		when intrinsics.type_is_struct(T) || intrinsics.type_is_union(T) {
 			arr[idx] = json.Object{}
 		} else {
-			arr[idx] = json.Value {}
+			arr[idx] = json.Value{}
 		}
 	}
 
@@ -250,9 +264,9 @@ serialize_field :: proc(s: ^Serializer, key: string, v: ^$T) -> bool {
 		assert(!(key in obj), "serialize_field writer: cur already has key")
 
 		when intrinsics.type_is_struct(T) || intrinsics.type_is_union(T) {
-			obj[strings.clone(key)] = json.Object {}
+			obj[strings.clone(key)] = json.Object{}
 		} else {
-			obj[strings.clone(key)] = json.Value {}
+			obj[strings.clone(key)] = json.Value{}
 		}
 	} else {
 		if !(key in obj) {
@@ -264,7 +278,10 @@ serialize_field :: proc(s: ^Serializer, key: string, v: ^$T) -> bool {
 
 	when intrinsics.type_is_union(T) {
 		if !s.is_writing && reflect.union_variant_typeid(s.cur^) == json.Integer {
-			log.warnf("Enum has become Union: Assuming enum value can be to set raw tag! Value: %v", v)
+			log.warnf(
+				"Enum has become Union: Assuming enum value can be to set raw tag! Value: %v",
+				v,
+			)
 			ti := type_info_of(T)
 			no_nil := false
 			if u, ok := ti.variant.(reflect.Type_Info_Union); ok {
@@ -290,8 +307,7 @@ serialize_field :: proc(s: ^Serializer, key: string, v: ^$T) -> bool {
 	return true
 }
 
-serialize :: proc {
-	// basics
+serialize :: proc {// basics
 	serialize_int,
 	serialize_slice,
 	serialize_dynamic_array,
@@ -301,6 +317,8 @@ serialize :: proc {
 	serialize_enum,
 	serialize_string,
 	serialize_rect,
+	serialize_tile,
+	serialize_world,
 }
 
 @(require_results)
@@ -313,7 +331,12 @@ serialize_rect :: proc(s: ^Serializer, v: ^Rect) -> bool {
 }
 
 @(require_results)
-serialize_union_variant_typeid :: proc(s: ^Serializer, key: string, v: ^typeid, $T: typeid) -> bool where intrinsics.type_is_union(T) {
+serialize_union_variant_typeid :: proc(
+	s: ^Serializer,
+	key: string,
+	v: ^typeid,
+	$T: typeid,
+) -> bool where intrinsics.type_is_union(T) {
 	ti := runtime.type_info_base(type_info_of(T))
 	uti, ok := ti.variant.(runtime.Type_Info_Union)
 
@@ -350,7 +373,7 @@ serialize_union_variant_typeid :: proc(s: ^Serializer, key: string, v: ^typeid, 
 				if tag == 0 {
 					v^ = nil
 				} else {
-					v^ = uti.variants[tag-1].id
+					v^ = uti.variants[tag - 1].id
 				}
 			}
 		} else {
@@ -358,6 +381,25 @@ serialize_union_variant_typeid :: proc(s: ^Serializer, key: string, v: ^typeid, 
 			return false
 		}
 	}
+
+	return true
+}
+
+@(require_results)
+serialize_tile :: proc(s: ^Serializer, v: ^Tile) -> bool {
+	serialize_field(s, "tile_idx", &v.tile_idx) or_return
+	serialize_field(s, "x", &v.x) or_return
+	serialize_field(s, "y", &v.y) or_return
+	serialize_field(s, "layer", &v.layer) or_return
+	serialize_field(s, "flip_x", &v.flip_x) or_return
+	serialize_field(s, "flip_y", &v.flip_y) or_return
+	return true
+}
+
+
+@(require_results)
+serialize_world :: proc (s: ^Serializer, w: ^World) -> bool {
+	serialize_field(s, "tiles", &w.tiles) or_return
 
 	return true
 }
