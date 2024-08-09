@@ -69,10 +69,7 @@ serialize_init_reader :: proc(s: ^Serializer, root: json.Value) {
 }
 
 @(require_results)
-serialize_int :: proc(
-	s: ^Serializer,
-	val: ^$T,
-) -> bool where intrinsics.type_is_integer(T) &&
+serialize_int :: proc(s: ^Serializer, val: ^$T) -> bool where intrinsics.type_is_integer(T),
 	size_of(T) <= size_of(i64) {
 	if s.is_writing {
 		s.cur^ = json.Integer(val^)
@@ -398,7 +395,7 @@ serialize_tile :: proc(s: ^Serializer, v: ^Tile) -> bool {
 
 
 @(require_results)
-serialize_world :: proc (s: ^Serializer, w: ^World) -> bool {
+serialize_world :: proc(s: ^Serializer, w: ^World) -> bool {
 	serialize_field(s, "tiles", &w.tiles) or_return
 
 	return true

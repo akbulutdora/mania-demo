@@ -2,7 +2,6 @@ package game
 
 import "core:encoding/json"
 import "core:fmt"
-import "core:log"
 import "core:math"
 import "core:math/linalg"
 import "core:os"
@@ -43,8 +42,6 @@ em: ^EditorMemory
 
 editor_refresh_globals :: proc(editor_memory: ^EditorMemory) {
 	em = editor_memory
-
-	log.info(fmt.tprintf("successfully read tiles.\n%v", em.world))
 }
 
 edit_mode_update :: proc() {
@@ -57,12 +54,13 @@ edit_mode_update :: proc() {
 	// rl.BeginBlendMode(.ALPHA_PREMULTIPLY)
 	// defer rl.EndBlendMode()
 
-	if rl.IsKeyPressed(.S ) {
+	if rl.IsKeyPressed(.S) {
 		s: Serializer
 		serialize_init_writer(&s)
 		assert(serialize(&s, &em.world))
+		defer json.destroy_value(s.root)
 
-		if data, err := json.marshal(s.root); err == nil {
+		if data, err := json.marshal(s.root, allocator = context.temp_allocator); err == nil {
 			os.write_entire_file("my_data.json", data)
 		}
 	}
@@ -155,4 +153,9 @@ layer_view_mode_compatible :: proc(object_layer: int, lvm: LayerViewMode, layer:
 	}
 
 	return false
+}
+
+editor_mode_shutdown :: proc() {
+	fmt.printfln("shutting down editor mode. %v", em.world)
+	delete(em.world.tiles)
 }

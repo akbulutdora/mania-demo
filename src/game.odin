@@ -12,6 +12,7 @@
 package game
 
 import "core:encoding/json"
+import "core:fmt"
 import "core:log"
 import "core:math"
 import "core:os"
@@ -19,7 +20,8 @@ import "core:prof/spall"
 import "core:slice"
 import "core:strings"
 import "core:time"
-import "core:fmt"
+
+_ :: fmt
 
 import rl "vendor:raylib"
 
@@ -314,7 +316,6 @@ draw :: proc() {
 	rl.BeginMode2D(ui_camera)
 	text := strings.clone_to_cstring(g_mem.player_hud_data.text, context.temp_allocator)
 	rl.DrawText(text, 10, PixelWindowHeight - 20, 8, g_mem.player_hud_data.color)
-	// rl.DrawText(fmt.ctprintf("player_pos: %v", g_mem.player_pos), 5, 5, 8, rl.WHITE)
 	rl.EndMode2D()
 }
 
@@ -323,6 +324,9 @@ game_update :: proc() -> bool {
 	if rl.IsKeyPressed(.F2) {
 		if (!g_mem.editing) {
 			g_mem.editor_memory.clear_color = g_mem.clear_color
+			g_mem.editor_memory.world.tiles = slice.clone_to_dynamic(g_mem.world.tiles[:])
+		} else {
+			editor_mode_shutdown()
 		}
 
 		g_mem.editing = !g_mem.editing
@@ -394,8 +398,12 @@ game_init :: proc() {
 		g_mem.clear_color = rl.SKYBLUE
 
 		w: World
-		if data, ok := os.read_entire_file("my_data.json"); ok {
-			if j, err := json.parse(data, parse_integers = true); err == nil {
+		if data, ok := os.read_entire_file("my_data.json", context.temp_allocator); ok {
+			if j, err := json.parse(
+				data,
+				parse_integers = true,
+				allocator = context.temp_allocator,
+			); err == nil {
 				s: Serializer
 				serialize_init_reader(&s, j)
 				assert(serialize_world(&s, &w))
@@ -413,6 +421,10 @@ game_init :: proc() {
 
 @(export)
 game_shutdown :: proc() {
+	if g_mem.editing {
+		editor_mode_shutdown()
+	}
+
 	rl.UnloadTexture(g_mem.player_run.texture)
 	rl.UnloadTexture(g_mem.player_idle.texture)
 	rl.UnloadTexture(g_mem.platform_texture)
@@ -446,6 +458,7 @@ game_memory_size :: proc() -> int {
 @(export)
 game_hot_reloaded :: proc(mem: rawptr) {
 	g_mem = (^GameMemory)(mem)
+	editor_refresh_globals(&g_mem.editor_memory)
 	drawables_init(&g_mem.drawables)
 }
 

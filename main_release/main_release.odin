@@ -29,7 +29,8 @@ main :: proc() {
 		os.stderr = logh
 	}
 
-	logger := logh_err == os.ERROR_NONE ? log.create_file_logger(logh) : log.create_console_logger()
+	logger :=
+		logh_err == os.ERROR_NONE ? log.create_file_logger(logh) : log.create_console_logger()
 	context.logger = logger
 
 	game.game_init_window()
